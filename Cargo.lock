@@ -1368,7 +1368,6 @@ dependencies = [
  "axum",
  "http-body-util",
  "migration",
- "once_cell",
  "sea-orm",
  "serde",
  "serde_json",
