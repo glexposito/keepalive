@@ -16,7 +16,7 @@ use crate::{
 pub fn router() -> Router<ComponentGroupStore> {
     Router::new()
         .route("/", get(list).post(create))
-        .route("/:id", get(find).patch(update).delete(delete))
+        .route("/{id}", get(find).patch(update).delete(delete))
 }
 
 async fn list(State(store): State<ComponentGroupStore>) -> Result<Json<Vec<ComponentGroup>>, AppError> {
