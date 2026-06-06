@@ -26,7 +26,7 @@ async fn create(app: &axum::Router, name: &str, display_order: i32) -> Value {
 
 #[tokio::test]
 async fn list_when_empty_returns_empty_array() {
-    let (app, _guard) = helpers::setup().await;
+    let app = helpers::setup().await;
 
     let res = app
         .oneshot(Request::get("/component-groups").body(Body::empty()).unwrap())
@@ -39,7 +39,7 @@ async fn list_when_empty_returns_empty_array() {
 
 #[tokio::test]
 async fn list_returns_groups_sorted_by_display_order() {
-    let (app, _guard) = helpers::setup().await;
+    let app = helpers::setup().await;
     create(&app, "Backend", 2).await;
     create(&app, "Frontend", 1).await;
     create(&app, "Database", 3).await;
@@ -59,7 +59,7 @@ async fn list_returns_groups_sorted_by_display_order() {
 
 #[tokio::test]
 async fn create_returns_created_group() {
-    let (app, _guard) = helpers::setup().await;
+    let app = helpers::setup().await;
     let created = create(&app, "API", 1).await;
     let id = created["id"].as_str().unwrap();
 
@@ -74,7 +74,7 @@ async fn create_returns_created_group() {
 
 #[tokio::test]
 async fn find_missing_returns_not_found() {
-    let (app, _guard) = helpers::setup().await;
+    let app = helpers::setup().await;
     let id = uuid::Uuid::new_v4();
 
     let res = app
@@ -87,7 +87,7 @@ async fn find_missing_returns_not_found() {
 
 #[tokio::test]
 async fn update_returns_updated_group_with_partial_changes() {
-    let (app, _guard) = helpers::setup().await;
+    let app = helpers::setup().await;
     let created = create(&app, "Old Name", 1).await;
     let id = created["id"].as_str().unwrap();
 
@@ -111,7 +111,7 @@ async fn update_returns_updated_group_with_partial_changes() {
 
 #[tokio::test]
 async fn delete_returns_no_content_and_removes_group() {
-    let (app, _guard) = helpers::setup().await;
+    let app = helpers::setup().await;
     let created = create(&app, "To Delete", 1).await;
     let id = created["id"].as_str().unwrap();
 
@@ -130,7 +130,7 @@ async fn delete_returns_no_content_and_removes_group() {
 
 #[tokio::test]
 async fn delete_missing_returns_not_found() {
-    let (app, _guard) = helpers::setup().await;
+    let app = helpers::setup().await;
     let id = uuid::Uuid::new_v4();
 
     let res = app
