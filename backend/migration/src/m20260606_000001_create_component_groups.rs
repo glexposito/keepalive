@@ -13,7 +13,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(ComponentGroup::Id)
-                            .uuid()
+                            .string_len(36)
                             .not_null()
                             .primary_key(),
                     )

@@ -10,7 +10,7 @@ mod entity {
     #[sea_orm(table_name = "component_group")]
     pub struct Model {
         #[sea_orm(primary_key, auto_increment = false)]
-        pub id: Uuid,
+        pub id: String,
         pub name: String,
         pub display_order: i32,
     }
@@ -23,7 +23,11 @@ mod entity {
 
 impl From<entity::Model> for ComponentGroup {
     fn from(m: entity::Model) -> Self {
-        Self { id: m.id, name: m.name, display_order: m.display_order }
+        Self {
+            id: Uuid::parse_str(&m.id).expect("component group id must be a valid UUID"),
+            name: m.name,
+            display_order: m.display_order,
+        }
     }
 }
 
@@ -51,7 +55,7 @@ impl Store {
     }
 
     pub async fn find_by_id(&self, id: Uuid) -> Result<Option<ComponentGroup>, DbErr> {
-        entity::Entity::find_by_id(id)
+        entity::Entity::find_by_id(id.to_string())
             .one(&self.db)
             .await
             .map(|opt| opt.map(Into::into))
@@ -59,7 +63,7 @@ impl Store {
 
     pub async fn insert(&self, name: String, display_order: i32) -> Result<ComponentGroup, DbErr> {
         entity::ActiveModel {
-            id: Set(Uuid::new_v4()),
+            id: Set(Uuid::new_v4().to_string()),
             name: Set(name),
             display_order: Set(display_order),
         }
@@ -69,7 +73,7 @@ impl Store {
     }
 
     pub async fn update(&self, id: Uuid, input: UpdateInput) -> Result<Option<ComponentGroup>, DbErr> {
-        let Some(row) = entity::Entity::find_by_id(id).one(&self.db).await? else {
+        let Some(row) = entity::Entity::find_by_id(id.to_string()).one(&self.db).await? else {
             return Ok(None);
         };
         let mut active: entity::ActiveModel = row.into();
@@ -83,7 +87,7 @@ impl Store {
     }
 
     pub async fn delete(&self, id: Uuid) -> Result<bool, DbErr> {
-        entity::Entity::delete_by_id(id)
+        entity::Entity::delete_by_id(id.to_string())
             .exec(&self.db)
             .await
             .map(|r| r.rows_affected > 0)

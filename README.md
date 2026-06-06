@@ -6,7 +6,7 @@ It is a lean work-in-progress tool in the same general space as Uptime Kuma.
 
 ## Run
 
-From `backend/api`:
+From the project root:
 
 ```bash
 docker compose up

@@ -8,10 +8,5 @@ publish = false
 name = "migration"
 path = "src/lib.rs"
 
-[[bin]]
-name = "migration"
-path = "src/main.rs"
-
 [dependencies]
-sea-orm-migration = { version = "1", features = ["runtime-tokio-rustls", "sqlx-postgres"] }
-tokio             = { version = "1", features = ["full"] }
+sea-orm-migration = { version = "1", default-features = false, features = ["runtime-tokio-rustls", "sqlx-sqlite"] }
