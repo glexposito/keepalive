@@ -6,8 +6,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rustup target add x86_64-unknown-linux-musl
 
-COPY api/src/Cargo.toml Cargo.toml
-COPY api/src/Cargo.lock Cargo.lock
+COPY Cargo.toml Cargo.lock ./
 COPY api/Cargo.toml api/Cargo.toml
 COPY migration/Cargo.toml migration/Cargo.toml
 

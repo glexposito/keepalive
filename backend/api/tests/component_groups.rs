@@ -5,6 +5,8 @@ use http_body_util::BodyExt;
 use serde_json::{json, Value};
 use tower::ServiceExt;
 
+const COMPONENT_GROUPS_PATH: &str = "/api/v1/component-groups";
+
 async fn body_json(body: Body) -> Value {
     let bytes = body.collect().await.unwrap().to_bytes();
     serde_json::from_slice(&bytes).unwrap()
@@ -13,7 +15,7 @@ async fn body_json(body: Body) -> Value {
 async fn create(app: &axum::Router, name: &str, display_order: i32) -> Value {
     let res = app.clone()
         .oneshot(
-            Request::post("/component-groups")
+            Request::post(COMPONENT_GROUPS_PATH)
                 .header("content-type", "application/json")
                 .body(Body::from(json!({"name": name, "display_order": display_order}).to_string()))
                 .unwrap(),
@@ -29,7 +31,7 @@ async fn list_when_empty_returns_empty_array() {
     let app = helpers::setup().await;
 
     let res = app
-        .oneshot(Request::get("/component-groups").body(Body::empty()).unwrap())
+        .oneshot(Request::get(COMPONENT_GROUPS_PATH).body(Body::empty()).unwrap())
         .await
         .unwrap();
 
@@ -45,7 +47,7 @@ async fn list_returns_groups_sorted_by_display_order() {
     create(&app, "Database", 3).await;
 
     let res = app
-        .oneshot(Request::get("/component-groups").body(Body::empty()).unwrap())
+        .oneshot(Request::get(COMPONENT_GROUPS_PATH).body(Body::empty()).unwrap())
         .await
         .unwrap();
 
@@ -64,7 +66,7 @@ async fn create_returns_created_group() {
     let id = created["id"].as_str().unwrap();
 
     let res = app
-        .oneshot(Request::get(format!("/component-groups/{id}")).body(Body::empty()).unwrap())
+        .oneshot(Request::get(format!("{COMPONENT_GROUPS_PATH}/{id}")).body(Body::empty()).unwrap())
         .await
         .unwrap();
 
@@ -78,7 +80,7 @@ async fn find_missing_returns_not_found() {
     let id = uuid::Uuid::new_v4();
 
     let res = app
-        .oneshot(Request::get(format!("/component-groups/{id}")).body(Body::empty()).unwrap())
+        .oneshot(Request::get(format!("{COMPONENT_GROUPS_PATH}/{id}")).body(Body::empty()).unwrap())
         .await
         .unwrap();
 
@@ -95,7 +97,7 @@ async fn update_returns_updated_group_with_partial_changes() {
         .oneshot(
             Request::builder()
                 .method("PATCH")
-                .uri(format!("/component-groups/{id}"))
+                .uri(format!("{COMPONENT_GROUPS_PATH}/{id}"))
                 .header("content-type", "application/json")
                 .body(Body::from(json!({"name": "New Name"}).to_string()))
                 .unwrap(),
@@ -116,13 +118,13 @@ async fn delete_returns_no_content_and_removes_group() {
     let id = created["id"].as_str().unwrap();
 
     let res = app.clone()
-        .oneshot(Request::delete(format!("/component-groups/{id}")).body(Body::empty()).unwrap())
+        .oneshot(Request::delete(format!("{COMPONENT_GROUPS_PATH}/{id}")).body(Body::empty()).unwrap())
         .await
         .unwrap();
     assert_eq!(res.status(), StatusCode::NO_CONTENT);
 
     let res = app
-        .oneshot(Request::get(format!("/component-groups/{id}")).body(Body::empty()).unwrap())
+        .oneshot(Request::get(format!("{COMPONENT_GROUPS_PATH}/{id}")).body(Body::empty()).unwrap())
         .await
         .unwrap();
     assert_eq!(res.status(), StatusCode::NOT_FOUND);
@@ -134,7 +136,7 @@ async fn delete_missing_returns_not_found() {
     let id = uuid::Uuid::new_v4();
 
     let res = app
-        .oneshot(Request::delete(format!("/component-groups/{id}")).body(Body::empty()).unwrap())
+        .oneshot(Request::delete(format!("{COMPONENT_GROUPS_PATH}/{id}")).body(Body::empty()).unwrap())
         .await
         .unwrap();
 
