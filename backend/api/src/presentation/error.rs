@@ -15,7 +15,11 @@ use utoipa::ToSchema;
 use crate::application::{error::UseCaseError, validation::ValidationErrors};
 
 /// RFC 7807 problem-details document shape returned by every error response,
-/// documented here so `utoipa` can render an example for `400`/`404`/`422` etc.
+/// documented here so `utoipa` can render its schema for `400`/`404`/`422` etc.
+///
+/// Deliberately has no schema-level `example`: a single example would be
+/// reused for every status this shape is attached to (404 would show a 422's
+/// `errors`, and so on). Each `#[utoipa::path]` response sets its own instead.
 #[derive(Serialize, ToSchema)]
 pub(crate) struct ProblemDetails {
     #[serde(rename = "type")]

@@ -67,8 +67,25 @@ pub(crate) async fn list(
     request_body = CreateRequest,
     responses(
         (status = 201, body = ComponentGroup),
-        (status = 400, description = "Malformed request body", body = ProblemDetails),
-        (status = 422, description = "Validation failed", body = ProblemDetails),
+        (
+            status = 400, description = "Malformed request body", body = ProblemDetails,
+            example = json!({
+                "type": "about:blank",
+                "status": 400,
+                "title": "Bad Request",
+                "detail": "Failed to parse the request body as JSON",
+            })
+        ),
+        (
+            status = 422, description = "Validation failed", body = ProblemDetails,
+            example = json!({
+                "type": "about:blank",
+                "status": 422,
+                "title": "Unprocessable Entity",
+                "detail": "request validation failed",
+                "errors": { "name": ["must not be blank"] },
+            })
+        ),
     ),
     tag = "Component Groups"
 )]
@@ -93,7 +110,10 @@ pub(crate) async fn create(
     params(("id" = Uuid, Path, description = "Component group ID")),
     responses(
         (status = 200, body = ComponentGroup),
-        (status = 404, description = "Not found", body = ProblemDetails),
+        (
+            status = 404, description = "Not found", body = ProblemDetails,
+            example = json!({ "type": "about:blank", "status": 404, "title": "Not Found" })
+        ),
     ),
     tag = "Component Groups"
 )]
@@ -113,9 +133,29 @@ pub(crate) async fn find(
     request_body = UpdateRequest,
     responses(
         (status = 200, body = ComponentGroup),
-        (status = 400, description = "Malformed request body", body = ProblemDetails),
-        (status = 404, description = "Not found", body = ProblemDetails),
-        (status = 422, description = "Validation failed", body = ProblemDetails),
+        (
+            status = 400, description = "Malformed request body", body = ProblemDetails,
+            example = json!({
+                "type": "about:blank",
+                "status": 400,
+                "title": "Bad Request",
+                "detail": "Failed to parse the request body as JSON",
+            })
+        ),
+        (
+            status = 404, description = "Not found", body = ProblemDetails,
+            example = json!({ "type": "about:blank", "status": 404, "title": "Not Found" })
+        ),
+        (
+            status = 422, description = "Validation failed", body = ProblemDetails,
+            example = json!({
+                "type": "about:blank",
+                "status": 422,
+                "title": "Unprocessable Entity",
+                "detail": "request validation failed",
+                "errors": { "name": ["must not be blank"] },
+            })
+        ),
     ),
     tag = "Component Groups"
 )]
@@ -140,7 +180,10 @@ pub(crate) async fn update(
     params(("id" = Uuid, Path, description = "Component group ID")),
     responses(
         (status = 204, description = "Deleted"),
-        (status = 404, description = "Not found", body = ProblemDetails),
+        (
+            status = 404, description = "Not found", body = ProblemDetails,
+            example = json!({ "type": "about:blank", "status": 404, "title": "Not Found" })
+        ),
     ),
     tag = "Component Groups"
 )]
