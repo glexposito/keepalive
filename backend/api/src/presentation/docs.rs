@@ -3,6 +3,7 @@ use utoipa::OpenApi;
 use utoipa_scalar::{Scalar, Servable};
 
 use crate::core::component_group::ComponentGroup;
+use crate::presentation::error::ProblemDetails;
 use crate::presentation::routers::v1::component_groups::{CreateRequest, UpdateRequest};
 
 #[derive(OpenApi)]
@@ -16,7 +17,7 @@ use crate::presentation::routers::v1::component_groups::{CreateRequest, UpdateRe
         crate::presentation::routers::v1::component_groups::update,
         crate::presentation::routers::v1::component_groups::delete,
     ),
-    components(schemas(ComponentGroup, CreateRequest, UpdateRequest))
+    components(schemas(ComponentGroup, CreateRequest, UpdateRequest, ProblemDetails))
 )]
 pub struct ApiDoc;
 

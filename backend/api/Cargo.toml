@@ -14,6 +14,9 @@ uuid        = { version = "1", features = ["v4", "serde"] }
 thiserror    = "2"
 utoipa = { version = "5", features = ["uuid"] }
 utoipa-scalar = { version = "0.3", features = ["axum"] }
+axum-valid = { version = "0.24.0", default-features = false, features = ["json", "garde", "422", "into_json"] }
+http-api-problem = { version = "0.60.0", features = ["axum"] }
+garde = { version = "0.22", features = ["derive"] }
 
 [dev-dependencies]
 tower                  = { version = "0.5", features = ["util"] }
