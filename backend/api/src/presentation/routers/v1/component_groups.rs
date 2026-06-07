@@ -10,9 +10,11 @@ use utoipa::ToSchema;
 use uuid::Uuid;
 
 use crate::{
-    application::component_group::{create_component_group, CreateComponentGroup},
+    application::component_group::{
+        create_component_group, update_component_group, CreateComponentGroup, UpdateComponentGroup,
+    },
     core::component_group::ComponentGroup,
-    infra::stores::component_group::{Store as ComponentGroupStore, UpdateInput},
+    infra::stores::component_group::Store as ComponentGroupStore,
     presentation::error::{AppError, ProblemDetails},
 };
 
@@ -165,11 +167,14 @@ pub(crate) async fn update(
     body: Result<Garde<Json<UpdateRequest>>, GardeRejection<JsonRejection>>,
 ) -> Result<Json<ComponentGroup>, AppError> {
     let Garde(Json(body)) = body?;
-    store
-        .update(id, UpdateInput { name: body.name, display_order: body.display_order })
-        .await?
-        .ok_or(AppError::NotFound)
-        .map(Json)
+    update_component_group(
+        &store,
+        id,
+        UpdateComponentGroup { name: body.name, display_order: body.display_order },
+    )
+    .await?
+    .ok_or(AppError::NotFound)
+    .map(Json)
 }
 
 /// Delete a component group
